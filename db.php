@@ -1,9 +1,24 @@
 <?php
-
-class db{
+// 將希望程式打開即運作的，放在全域之首
     date_default_timezone_set("Asia/Taipei");
-    $dsn = "mysql:host=localhost;charset=utf8;dbname=school";
-    $pdo = new PDO($dsn, 'root', '');
+    session_start();
+class db{
+
+   protected $dsn = "mysql:host=localhost;charset=utf8;dbname=db";
+   protected $pdo;
+   protected $table;
+
+// 類別宣告即啟用的
+public function __construct($table)
+{
+    $this->table=$table;
+    
+    // 類別中，要吃到自己所處{}外的變數，需要加上$this->
+    $this->pdo=new PDO($this->dsn,'root','');
+}
+
+
+
 
 // -----all-----
 
