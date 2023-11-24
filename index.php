@@ -23,7 +23,7 @@
 // // 在這個例子中，$name 是 public 屬性，外部程式碼可以直接訪問和修改。
 // // 通過 $animal->name，我們可以直接設置和讀取名稱的值。
 
-// ----Protected、private----
+// ----Protected、Private----
 
 // class Animal {
 //     protected $name;
@@ -45,6 +45,11 @@
 // $animal->setName('小花'); // 透過方法設定 $name
 // echo '顯示名稱: ' . $animal->getName(); // 顯示名稱: 小花
 // echo "<br>";
+
+// // // 在protected、private失敗
+// // $animal->name = '花枝丸'; 
+// // echo '顯示名稱: ' . $animal->name; 
+// // echo "<br>";
 
 // // 在這個例子中，$name 是 protected 屬性，外部程式碼不能直接訪問 $animal->name。
 // // 取而代之的是，我們使用 setName 方法來設定 $name 的值，而使用 getName 方法來取得 $name 的值。
