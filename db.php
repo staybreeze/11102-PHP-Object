@@ -78,51 +78,78 @@ function find($id)
 
 // -----update+insert-----
 
+// function save($array){
+//     if(isset($array['id'])){
+//         $this->update($array['id'],$array);
+//     }else{
+//         $this->insert($array);
+//     }
+// }
+
 function save($array){
     if(isset($array['id'])){
-        $this->update($array['id'],$array);
-    }else{
-        $this->insert($array);
-    }
-}
+        $sql = "update `$this->table` set ";
 
+        if (!empty($cols)) {
+            foreach ($cols as $col => $value) {
+                $tmp[] = "`$col`='$value'";
+            }
+        } else {
+            echo "錯誤:缺少要編輯的欄位陣列";
+        }
+    
+        $sql .= join(",", $tmp);
+        $sql .= " where `id`='{$array['id']}'";
+    }else{
+        $sql = "insert into `$this->table` ";
+        $cols = "(`" . join("`,`", array_keys($array)) . "`)";
+        $vals = "('" . join("','", $array) . "')";
+    
+        $sql = $sql . $cols . " values " . $vals;
+    }
+
+    return $this->pdo->exec($sql);
+}
 
 // -----update-----
 
-// UPDATE `table` SET `col1`='value1',`col2`='value2',...　WHERE ...
-
-// 使用protected 保護update跟insert，使其修改只能透過SAVA
-protected function update( $id, $cols)
-{
+// // UPDATE `table` SET `col1`='value1',`col2`='value2',...　WHERE ...
 
 
-    $sql = "update `$this->table` set ";
-    // 因為要填入兩個變數，因此要分別判斷兩個變數
-    // 判斷$cols
-    if (!empty($cols)) {
-        foreach ($cols as $col => $value) {
-            $tmp[] = "`$col`='$value'";
-        }
-    } else {
-        echo "錯誤:缺少要編輯的欄位陣列";
-    }
+// // 使用protected 保護update跟insert，使其修改只能透過SAVE -> 最後已合併至SAVE，因此不需要了
+// protected function update( $id, $cols)
+// {
 
-    $sql .= join(",", $tmp);
 
-    if (is_array($id)) {
-        foreach ($id as $col => $value) {
-            $tmp[] = "`$col`='$value'";
-        }
-        $sql .= " where " . join(" && ", $tmp);
-    } else if (is_numeric($id)) {
-        $sql .= " where `id`='$id'";
-    } else {
-        echo "錯誤:參數的資料型態比須是數字或陣列";
-    }
-    echo $sql;
-    return $this->pdo->exec($sql);
+//     $sql = "update `$this->table` set ";
+//     // 因為要填入兩個變數，因此要分別判斷兩個變數
+//     // 判斷$cols
+//     if (!empty($cols)) {
+//         foreach ($cols as $col => $value) {
+//             $tmp[] = "`$col`='$value'";
+//         }
+//     } else {
+//         echo "錯誤:缺少要編輯的欄位陣列";
+//     }
 
-}
+//     $sql .= join(",", $tmp);
+
+//     if (is_array($id)) {
+//         foreach ($id as $col => $value) {
+//             $tmp[] = "`$col`='$value'";
+//         }
+//         $sql .= " where " . join(" && ", $tmp);
+//     } else if (is_numeric($id)) {
+//         $sql .= " where `id`='$id'";
+//     } else {
+//         echo "錯誤:參數的資料型態比須是數字或陣列";
+//     }
+
+    
+//     echo $sql;
+//     return $this->pdo->exec($sql);
+
+// }
 
 // -----delete-----
 
@@ -152,36 +179,38 @@ function del( $id)
 // -----insert-----
 
 
-// INSERT INTO `table`(`col1`,`col2`,`col3`,`col4`,`col5`) 
-//             VALUES('value1','value1','value1','value1','value1','value1');
+// // INSERT INTO `table`(`col1`,`col2`,`col3`,`col4`,`col5`) 
+// //             VALUES('value1','value1','value1','value1','value1','value1');
 
+// // 使用protected 保護update跟insert，使其修改只能透過SAVE -> 最後已合併至SAVE，因此不需要了
 
-
-protected function insert($values){
+// protected function insert($values){
 
     
 
 
-$sql = "insert into `$this->table` ";
+// $sql = "insert into `$this->table` ";
 
-// $cols="(``,``,``,``,)";
-// $vals="('','','','',)";
+// // $cols="(``,``,``,``,)";
+// // $vals="('','','','',)";
 
-$cols="(`".join("`,`",array_keys($values))."`)";
-$vals="('".join("','",$values)."')";
+// $cols="(`".join("`,`",array_keys($values))."`)";
+// $vals="('".join("','",$values)."')";
 
-$sql=$sql . $cols  ." values ".$vals;
-// $sql=insert into `$table` . (``,``,``,``,) ." values ".('','','','',);
+// $sql=$sql . $cols  ." values ".$vals;
+// // $sql=insert into `$table` . (``,``,``,``,) ." values ".('','','','',);
 
-echo $sql;
-return $this->pdo->exec($sql);
+// echo $sql;
+// return $this->pdo->exec($sql);
+
+
+// }
+
+
 
 
 }
 
-
-
-}
 
 function dd($array)
 {
