@@ -76,11 +76,23 @@ function find($id)
     return $row;
 }
 
+// -----update+insert-----
+
+function save($array){
+    if(isset($array['id'])){
+        $this->update($array['id'],$array);
+    }else{
+        $this->insert($array);
+    }
+}
+
+
 // -----update-----
 
 // UPDATE `table` SET `col1`='value1',`col2`='value2',...　WHERE ...
 
-function update( $id, $cols)
+// 使用protected 保護update跟insert，使其修改只能透過SAVA
+protected function update( $id, $cols)
 {
 
 
@@ -145,7 +157,7 @@ function del( $id)
 
 
 
-function insert($values){
+protected function insert($values){
 
     
 
