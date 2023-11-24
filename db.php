@@ -4,7 +4,7 @@
     session_start();
 class db{
 
-   protected $dsn = "mysql:host=localhost;charset=utf8;dbname=db";
+   protected $dsn = "mysql:host=localhost;charset=utf8;dbname=school";
    protected $pdo;
    protected $table;
 
@@ -18,29 +18,22 @@ public function __construct($table)
 }
 
 
-
-
 // -----all-----
 
 // SELECT `col1`,`col2`,... FROM `table1`,`table2`,...　WHERE ...
-function all($table = null, $where = '', $other = '')
+
+// $table已經存在了，所以可以拿掉
+function all($where = '', $other = '')
 {
-    // 如果重複的資料很多，就用include
-    // include "./include/connect.php";
 
-    $sql = "select * from `$table` ";
-    // 資料不多可以設成自訂函式
-    // $pdo=pdo('school');
 
-    // 也可以在全域設定並呼叫
-    global $pdo;
-    if (isset($table) && !empty($table)) {
+    $sql = "select * from `$this->table` ";
+
+
+    if (isset($this->table) && !empty($this->table)) {
 
         if (is_array($where)) {
-            /**
-             * ['dept'=>'2','graduate_at'=>12] =>  where `dept`='2' && `graduate_at`='12'
-             * $sql="select * from `$table` where `dept`='2' && `graduate_at`='12'"
-             */
+
             if (!empty($where)) {
                 foreach ($where as $col => $value) {
                     // 暫時存儲迴圈中生成的條件片段
@@ -54,7 +47,7 @@ function all($table = null, $where = '', $other = '')
 
         $sql .= $other;
         echo 'all=>' . $sql;
-        $rows = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        $rows = $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
         return $rows;
     } else {
         echo "錯誤:沒有指定的資料表名稱";
@@ -63,11 +56,10 @@ function all($table = null, $where = '', $other = '')
 
 // -----find-----
 
-function find($table, $id)
+function find($id)
 {
-    $dsn = "mysql:host=localhost;charset=utf8;dbname=school";
-    $pdo = new PDO($dsn, 'root', '');
-    $sql = "select * from `$table` ";
+
+    $sql = "select * from `$this->table` ";
 
     if (is_array($id)) {
         foreach ($id as $col => $value) {
@@ -80,7 +72,7 @@ function find($table, $id)
         echo "錯誤:參數的資料型態比須是數字或陣列";
     }
     echo 'find=>' . $sql;
-    $row = $pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
+    $row = $this->pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
     return $row;
 }
 
@@ -88,12 +80,11 @@ function find($table, $id)
 
 // UPDATE `table` SET `col1`='value1',`col2`='value2',...　WHERE ...
 
-function update($table, $id, $cols)
+function update( $id, $cols)
 {
-    $dsn = "mysql:host=localhost;charset=utf8;dbname=school";
-    $pdo = new PDO($dsn, 'root', '');
 
-    $sql = "update `$table` set ";
+
+    $sql = "update `$this->table` set ";
     // 因為要填入兩個變數，因此要分別判斷兩個變數
     // 判斷$cols
     if (!empty($cols)) {
@@ -106,21 +97,6 @@ function update($table, $id, $cols)
 
     $sql .= join(",", $tmp);
 
-    // 判斷$id
-
-    // 當$id只要查id的時候
-    // if (is_array($id)) {
-    //     foreach ($id as $col => $value) {
-    //         $tmp[] = "`$col`='$value'";
-    //     }
-    // } elseif (is_numeric($id)) {
-    //     $sql .= " where `id`='$id'";
-    // } else {
-    //     echo "錯誤:參數的資料型態應為數字或陣列";
-    // }
-
-
-    // $id可以不只查id，也可以查其他的where
     if (is_array($id)) {
         foreach ($id as $col => $value) {
             $tmp[] = "`$col`='$value'";
@@ -132,7 +108,7 @@ function update($table, $id, $cols)
         echo "錯誤:參數的資料型態比須是數字或陣列";
     }
     echo $sql;
-    return $pdo->exec($sql);
+    return $this->pdo->exec($sql);
 
 }
 
@@ -140,11 +116,10 @@ function update($table, $id, $cols)
 
 // DELETE FROM `table` WHERE ...
 
-function del($table, $id)
+function del( $id)
 {
-    $dsn = "mysql:host=localhost;charset=utf8;dbname=school";
-    $pdo = new PDO($dsn, 'root', '');
-    $sql = "delete from `$table` ";
+
+    $sql = "delete from `$this->table` ";
 
     if (is_array($id)) {
         foreach ($id as $col => $value) {
@@ -158,7 +133,7 @@ function del($table, $id)
     }
 
     echo 'del=>' . $sql;
-    $row = $pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
+    $row = $this->pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
     return $row;
 }
 
@@ -170,12 +145,12 @@ function del($table, $id)
 
 
 
-function insert($table,$values){
+function insert($values){
 
     
-    global $pdo;
 
-$sql = "insert into `$table` ";
+
+$sql = "insert into `$this->table` ";
 
 // $cols="(``,``,``,``,)";
 // $vals="('','','','',)";
@@ -187,7 +162,11 @@ $sql=$sql . $cols  ." values ".$vals;
 // $sql=insert into `$table` . (``,``,``,``,) ." values ".('','','','',);
 
 echo $sql;
-return $pdo->exec($sql);
+return $this->pdo->exec($sql);
+
+
+}
+
 
 
 }
@@ -199,4 +178,22 @@ function dd($array)
     echo "</pre>";
 }
 
-}
+$student = new DB('students');
+// $result = $student->insert(
+//     ['id' => '7',
+// 'school_num' => '911007',
+// 'name' => '林明珠',
+// 'birthday' => '1984-01-06',
+// 'uni_id' => 'F200000071',
+// 'addr' => '南投縣草屯鎮三爪子坑路106 巷11號3',
+// 'parents' => '王學義',
+// 'tel' => '04-13974327',
+// 'dept' => '16',
+// 'graduate_at' => '2',
+// 'status_code' => '001']
+// );
+// $result = $student->update(7, ['name' => '林明珠']);
+
+
+
+dd($result);
