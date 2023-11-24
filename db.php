@@ -54,6 +54,40 @@ function all($where = '', $other = '')
     }
 }
 
+
+// -----count-----
+
+// SELECT `col1`,`col2`,... FROM `table1`,`table2`,...　WHERE ...
+
+// $table已經存在了，所以可以拿掉
+function count( $where = '', $other = '')
+{
+    $sql = "select count(*) from `$this->table` ";
+
+    if (isset($this->table) && !empty($this->table)) {
+
+        if (is_array($where)) {
+
+            if (!empty($where)) {
+                foreach ($where as $col => $value) {
+                    $tmp[] = "`$col`='$value'";
+                }
+                $sql .= " where " . join(" && ", $tmp);
+            }
+        } else {
+            $sql .= " $where";
+        }
+
+        $sql .= $other;
+        //echo 'all=>'.$sql;
+        $rows = $this->pdo->query($sql)->fetchColumn();
+        return $rows;
+    } else {
+        echo "錯誤:沒有指定的資料表名稱";
+    }
+}
+
+
 // -----find-----
 
 function find($id)
@@ -87,6 +121,7 @@ function find($id)
 // }
 
 function save($array){
+    // update跟insert只差在有無$id，因此判斷其是否存在便可以分流處理
     if(isset($array['id'])){
         $sql = "update `$this->table` set ";
 
@@ -206,7 +241,10 @@ function del( $id)
 
 // }
 
+function q($sql){
+    return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
+}
 
 
 }
@@ -234,7 +272,8 @@ $student = new DB('students');
 // 'status_code' => '001']
 // );
 // $result = $student->update(7, ['name' => '林明珠']);
+// dd($result);
 
+$rows=$student->count();
 
-
-dd($result);
+dd($rows);
