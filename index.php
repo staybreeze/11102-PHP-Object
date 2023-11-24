@@ -13,4 +13,8 @@ class Animal{
 
 $animal=new Animal; //實例化(實體化) instant
 
-echo $animal;
+echo '顯示名稱'. $animal->name;
+echo "<br>";
+$animal->setName('小花');
+echo '顯示名稱'. $animal->name;
+echo "<br>";
