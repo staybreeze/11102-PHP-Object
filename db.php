@@ -36,10 +36,7 @@ class db
             if (is_array($where)) {
 
                 if (!empty($where)) {
-                    foreach ($where as $col => $value) {
-                        // 暫時存儲迴圈中生成的條件片段
-                        $tmp[] = "`$col`='$value'";
-                    }
+                    $tmp = $this->a2s($where);
                     $sql .= " where " . join(" && ", $tmp);
                 }
             } else {
@@ -70,9 +67,7 @@ class db
             if (is_array($where)) {
 
                 if (!empty($where)) {
-                    foreach ($where as $col => $value) {
-                        $tmp[] = "`$col`='$value'";
-                    }
+                    $tmp = $this->a2s($where);
                     $sql .= " where " . join(" && ", $tmp);
                 }
             } else {
@@ -97,9 +92,7 @@ class db
         $sql = "select * from `$this->table` ";
 
         if (is_array($id)) {
-            foreach ($id as $col => $value) {
-                $tmp[] = "`$col`='$value'";
-            }
+            $tmp = $this->a2s($id);
             $sql .= " where " . join(" && ", $tmp);
         } else if (is_numeric($id)) {
             $sql .= " where `id`='$id'";
@@ -129,9 +122,7 @@ class db
 
             if (!empty($array)) {
 
-                foreach ($array as $col => $value) {
-                    $tmp[] = "`$col`='$value'";
-                }
+                $tmp = $this->a2s($array);
             } else {
                 echo "錯誤:缺少要編輯的欄位陣列";
             }
@@ -201,9 +192,7 @@ class db
         $sql = "delete from `$this->table` ";
 
         if (is_array($id)) {
-            foreach ($id as $col => $value) {
-                $tmp[] = "`$col`='$value'";
-            }
+            $tmp = $this->a2s($id);
             $sql .= " where " . join(" && ", $tmp);
         } else if (is_numeric($id)) {
             $sql .= " where `id`='$id'";
@@ -250,6 +239,17 @@ class db
     function q($sql)
     {
         return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    private function a2s($array)
+    {
+
+        foreach ($array as $col => $value) {
+            // 暫時存儲迴圈中生成的條件片段
+            $tmp[] = "`$col`='$value'";
+        }   
+        // 把生成的$tmp丟回去給前面的程式使用
+        return $tmp;
     }
 }
 
