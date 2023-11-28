@@ -24,7 +24,7 @@ class db
     // SELECT `col1`,`col2`,... FROM `table1`,`table2`,...　WHERE ...
 
     // $table已經存在了，所以可以拿掉
-    function all($where = '', $other = '')
+    function all($id = '', $other = '')
     {
 
 
@@ -33,14 +33,14 @@ class db
 
         if (isset($this->table) && !empty($this->table)) {
 
-            if (is_array($where)) {
+            if (is_array($id)) {
 
-                if (!empty($where)) {
-                    $tmp = $this->a2s($where);
+                if (!empty($id)) {
+                    $tmp = $this->a2s($id);
                     $sql .= " where " . join(" && ", $tmp);
                 }
             } else {
-                $sql .= " $where";
+                $sql .= " $id";
             }
 
             $sql .= $other;
@@ -279,14 +279,14 @@ $student = new DB('students');
 
 // $result = $student->update(7, ['name' => '林明珠']);
 
-$result = $student->q(
+// $result = $student->q(
 
-    "select * from `students` "
+//     "select * from `students` "
 
-);
-dd($result);
+// );
+// dd($result);
 
-// $rows=$student->count();
+$rows=$student->count();
 // $rows=$student->find(['id'=>'7']);
 // $rows=$student->find(96);
-// dd($rows);
+dd($rows);
